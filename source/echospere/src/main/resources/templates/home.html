@@ -4,8 +4,31 @@
     <meta charset="UTF-8">
     <title>EchoSphere-Web Player Music</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
+    <header th:replace="~{fragments/header :: mainHeader}"></header>
+    <div class="container">
+        <div class="slide"></div>
+        <div class="content"></div>
+    </div>
+    <footer th:replace="~{fragments/footer :: mainFooter}"></footer>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const slide = document.querySelector('.slide');
+        const content = document.querySelector('.content');
+
+        // Simulate loading content
+        setTimeout(() => {
+            slide.innerHTML = '<h1>Welcome to EchoSphere</h1>';
+            content.innerHTML = '<p>Your music journey starts here!</p>';
+        }, 1000);
+    });
+
+    document.addEventListener("click" , function() {
+        const profile = document.querySelector('.profile');
+        profile.classList.toggle('hidden');
+    }
+</script>
 </html>

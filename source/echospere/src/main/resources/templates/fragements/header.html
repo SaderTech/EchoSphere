@@ -1,10 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Header</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
+    <header>
+        <nav th:fragment="mainHeader" class="bg-gray-800 text-white">
+            <div class="container mx-auto flex justify-between items-center bg-gray-800 p-4">
+                <div><a href="/home" class="text-white text-lg font-bold"><img src="/static/ChatGPT Image 14_27_00 17 thg 6, 2025.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 30px"></a></div>
+                <div class="br-white-300 br-radius-10px">
+                    <a href="/home" style="margin-inside: 10px"><i class="fa-solid fa-house fa-bounce fa-xl" style="color: #ecebea;"></i></a>
+                    <input type="text" placeholder="Search" class="mx-10px pr-200px br-white-300! br-radius-10px! text-white rounded-md px-4 py-2" style="padding-right: 200px ; margin-left: 10px; border-color: white; border-radius: 10px !important;">
+                </div>
+                <ul class="space-x-4 flex items-center">
+                    <li><a href="/notification"><span><i class="fa-regular fa-bell fa-shake fa-xl" style="color: #FFD43B;"></i></span></a></li>
+                    <li th:if="${session.userID == null}"><a href="/login" class=" px-4 py-2 rounded-md font-medium hover:bg-blue-600 text-black-300 transition-color duration-200">Log In</a></li>
+                    <li th:if="${session.userID != null}" class="relative">
+                    <div class="dropdown inline-block relative">
+                        <button class=" text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 inline-flex items-center">
+                            <span><i class="fa-classic fa-regular fa-user fa-xl"></i></span>
+                        </button>
+                        <div class="dropdown-menu absolute hidden text-gray-700 pt-1">
+                            <div class="bg-white shadow-lg roudered-md py-1">
+                                <a href="" class="block px-3 py-2 text-white-300 hover:bg-gray-100">Profile</a>
+                                <a href="" class="block px-3 py-2 text-white-300 hover:bg-gray-100">Control(ADMIN)</a>
+                                <a href="" class="block px-3 py-2 text-white-300 hover:bg-gray-100">Account</a>
+                                <a href="" class="block px-3 py-2 text-white-300 hover:bg-gray-100">Setting</a>
+                                <hr class="my-1">
+                                <a href="" class="block px-3 py-2 text-white-300 hover:bg-gray-100">Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dropdown = document.querySelector('.dropdown');
+                if (dropdown){
+                    dropdown.addEventListener('click', function () {
+                        this.querySelector('.dropdown-menu').classList.toggle('hidden');
+                    });
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function (event) {
+                        if (!dropdown.contains(event.target)) {
+                            dropdown.querySelector('.dropdown-menu').classList.add('hidden');
+                        }
+                    });
+                }
+            })
+        </script>
+    </header>
 </body>
 </html>
