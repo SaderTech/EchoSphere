@@ -74,7 +74,6 @@ CREATE TABLE [artists] (
 
     CONSTRAINT [PK_artists] PRIMARY KEY ([id]),
     -- Một tài khoản người dùng chỉ có thể liên kết với một hồ sơ nghệ sĩ
-    CONSTRAINT [UQ_artists_user_id] UNIQUE ([user_id]),
     CONSTRAINT [FK_artists_users] FOREIGN KEY ([user_id]) REFERENCES [users]([id]) ON DELETE SET NULL
 );
 GO
