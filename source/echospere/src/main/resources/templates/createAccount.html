@@ -1,10 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Tài Khoản - EchoSphere</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Áp dụng font Poppins cho toàn bộ trang */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 bg-cover bg-center" style="background-image: url('https://img.freepik.com/premium-vector/gradient-abstract-purple-background_23-2151877370.jpg?w=826');">
+
+<div class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-black bg-opacity-20 backdrop-blur-lg rounded-xl shadow-lg p-8 text-white">
+
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold">Tạo Tài Khoản Mới</h1>
+            <p class="text-gray-300 mt-2">Tham gia cộng đồng EchoSphere ngay hôm nay</p>
+        </div>
+
+        <form action="#" class="space-y-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="firstname" class="text-sm font-medium text-gray-200 block mb-2">Họ</label>
+                    <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-solid fa-user-pen text-gray-400"></i>
+                            </span>
+                        <input type="text" id="firstname" name="firstname" placeholder="Nguyễn"
+                               class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                    </div>
+                </div>
+                <div>
+                    <label for="lastname" class="text-sm font-medium text-gray-200 block mb-2">Tên</label>
+                    <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-solid fa-user-pen text-gray-400"></i>
+                            </span>
+                        <input type="text" id="lastname" name="lastname" placeholder="Văn A"
+                               class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label for="username" class="text-sm font-medium text-gray-200 block mb-2">Tên tài khoản</label>
+                <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa-solid fa-user-tag text-gray-400"></i>
+                        </span>
+                    <input type="text" id="username" name="username" placeholder="nguyenvana"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div>
+                <label for="email" class="text-sm font-medium text-gray-200 block mb-2">Email</label>
+                <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                             <i class="fa-solid fa-envelope text-gray-400"></i>
+                        </span>
+                    <input type="email" id="email" name="email" placeholder="example@email.com"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="text-sm font-medium text-gray-200 block mb-2">Mật khẩu</label>
+                <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                             <i class="fa-solid fa-lock text-gray-400"></i>
+                        </span>
+                    <input type="password" id="password" name="password" placeholder="••••••••"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div>
+                <label for="confirm-password" class="text-sm font-medium text-gray-200 block mb-2">Xác nhận Mật khẩu</label>
+                <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                             <i class="fa-solid fa-lock text-gray-400"></i>
+                        </span>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Đăng Ký
+                </button>
+            </div>
+
+            <div class="text-center pt-4">
+                <p class="text-sm text-gray-300">
+                    Đã có tài khoản?
+                    <a href="/login" class="font-medium text-purple-400 hover:text-purple-300 transition-colors">
+                        Đăng nhập ngay
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+
+</div>
 </body>
 </html>
