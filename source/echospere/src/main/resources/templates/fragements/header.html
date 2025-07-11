@@ -7,63 +7,65 @@
     <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<header>
-    <nav th:fragment="mainHeader" class="bg-gray-800 text-white">
-        <div class="container mx-auto flex justify-between items-center p-4">
-            <div>
-                <a href="/home" class="text-white text-lg font-bold">
-                    <img src="/static/ChatGPT Image 14_27_00 17 thg 6, 2025.png" alt="Logo" class="w-12 h-12 rounded-full">
-                </a>
-            </div>
-            <div class="flex items-center">
-                <a href="/home" class="mr-4"><i class="fa-solid fa-house fa-bounce fa-xl text-gray-100"></i></a>
-                <input type="text" placeholder="Search" class="w-64 bg-gray-700 text-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <ul class="flex items-center space-x-4">
-                <li>
-                    <a href="/notification">
-                        <i class="fa-regular fa-bell fa-shake fa-xl text-yellow-400"></i>
+<div th:fragment="mainHeader">
+    <header>
+        <nav class="bg-gray-900 text-white">
+            <div class="container mx-auto bg-gray-900 flex justify-between items-center p-4">
+                <div>
+                    <a href="/home" class="text-white text-lg font-bold">
+                        <img src="/static/ChatGPT Image 14_27_00 17 thg 6, 2025.png" alt="Logo" class="w-12 h-12 rounded-full">
                     </a>
-                </li>
-                <li th:if="${session.userID == null}">
-                    <a href="/login" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200">Log In</a>
-                </li>
-                <li th:if="${session.userID != null}" class="relative">
-                    <div class="dropdown inline-block">
-                        <button class="text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200 flex items-center">
-                            <i class="fa-regular fa-user fa-xl"></i>
-                        </button>
-                        <div class="dropdown-menu absolute hidden text-gray-700 pt-2 right-0 w-48 z-10">
-                            <div class="bg-white shadow-lg rounded-lg py-2">
-                                <a href="/profile" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
-                                <a href="/admin" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Control (ADMIN)</a>
-                                <a href="/account" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Account</a>
-                                <a href="/settings" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
-                                <hr class="my-1">
-                                <a href="/logout" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Log Out</a>
+                </div>
+                <div class="flex items-center">
+                    <a href="/home" class="mr-4"><i class="fa-solid fa-house fa-bounce fa-xl text-gray-100"></i></a>
+                    <input type="text" placeholder="Search" class="w-64 bg-gray-700 text-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <ul class="flex items-center space-x-4">
+                    <li>
+                        <a href="/notification">
+                            <i class="fa-regular fa-bell fa-shake fa-xl text-yellow-400"></i>
+                        </a>
+                    </li>
+                    <li th:if="${session.userID == null}">
+                        <a href="/login" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200">Log In</a>
+                    </li>
+                    <li th:if="${session.userID != null}" class="relative">
+                        <div class="dropdown inline-block">
+                            <button class="text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                <i class="fa-regular fa-user fa-xl"></i>
+                            </button>
+                            <div class="dropdown-menu absolute hidden text-white pt-2 right-0 w-48 z-10" style="margin-top: 26.6px;">
+                                <div class="bg-gray-700 shadow-lg rounded-lg py-2">
+                                    <a href="/profile" class="block px-4 py-2  hover:bg-gray-600">Profile</a>
+                                    <a href="/admin" class="block px-4 py-2  hover:bg-gray-600">Control (ADMIN)</a>
+                                    <a href="/account" class="block px-4 py-2  hover:bg-gray-600">Account</a>
+                                    <a href="/settings" class="block px-4 py-2  hover:bg-gray-600">Settings</a>
+                                    <hr class="my-1">
+                                    <a href="/logout" class="block px-4 py-2  hover:bg-gray-600">Log Out</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const dropdown = document.querySelector('.dropdown');
-            if (dropdown) {
-                dropdown.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                    this.querySelector('.dropdown-menu').classList.toggle('hidden');
-                });
-                document.addEventListener('click', function (event) {
-                    if (!dropdown.contains(event.target)) {
-                        dropdown.querySelector('.dropdown-menu').classList.add('hidden');
-                    }
-                });
-            }
-        });
-    </script>
-</header>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dropdown = document.querySelector('.dropdown');
+                if (dropdown) {
+                    dropdown.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        this.querySelector('.dropdown-menu').classList.toggle('hidden');
+                    });
+                    document.addEventListener('click', function (event) {
+                        if (!dropdown.contains(event.target)) {
+                            dropdown.querySelector('.dropdown-menu').classList.add('hidden');
+                        }
+                    });
+                }
+            });
+        </script>
+    </header>
+</div>
 </body>
 </html>

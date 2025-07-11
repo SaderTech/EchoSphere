@@ -7,12 +7,20 @@
     <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header th:replace="~{fragments/header :: mainHeader}"></header>
+    <header th:replace="~{fragements/header.html :: mainHeader}"></header>
     <div class="container">
-        <div class="slide"></div>
-        <div class="content"></div>
+        <div class="content">
+            <div class="Album"></div>
+            <div class="playlist"></div>
+            <div class="trending-song"></div>
+        </div>
+        <div class="slide">
+            <div class="BaiHatYeuThich"></div>
+            <div class="Playlist"></div>
+            <div class="artists"></div>
+        </div>
     </div>
-    <footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+    <footer th:replace="~{fragements/footer.html :: mainFooter}"></footer>
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -29,6 +37,6 @@
     document.addEventListener("click" , function() {
         const profile = document.querySelector('.profile');
         profile.classList.toggle('hidden');
-    }
+    });
 </script>
 </html>
