@@ -40,7 +40,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                 <i class="fa-solid fa-user-pen text-gray-400"></i>
                             </span>
-                        <input type="text" id="firstname" name="firstname" placeholder="Nguyễn"
+                        <input type="text" id="firstname" name="firstName" placeholder="Nguyễn"
                                class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                 <i class="fa-solid fa-user-pen text-gray-400"></i>
                             </span>
-                        <input type="text" id="lastname" name="lastname" placeholder="Văn A"
+                        <input type="text" id="lastname" name="lastName" placeholder="Văn A"
                                class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
                     </div>
                 </div>
@@ -84,8 +84,8 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                              <i class="fa-solid fa-lock text-gray-400"></i>
                         </span>
-                    <input type="password" id="password" name="password" placeholder="••••••••"
-                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                    <input type="password" id="password" name="passwordHash" placeholder="••••••••"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" required minlength="8" maxlength="20">
                 </div>
             </div>
 
@@ -95,8 +95,8 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                              <i class="fa-solid fa-lock text-gray-400"></i>
                         </span>
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••"
-                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                    <input type="password" id="confirm-password" name="confirmPassword" placeholder="••••••••"
+                           class="w-full bg-gray-700 bg-opacity-50 border border-gray-600 rounded-md py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" required minlength="8" maxlength="20">
                 </div>
             </div>
 
@@ -119,5 +119,19 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Mật khẩu và xác nhận mật khẩu không khớp!');
+            }
+        });
+    });
+</script>
 </body>
 </html>

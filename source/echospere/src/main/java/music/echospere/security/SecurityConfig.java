@@ -2,7 +2,6 @@ package music.echospere.security;
 
 import lombok.AllArgsConstructor;
 import music.echospere.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -44,15 +43,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(httpForm -> {
-                    httpForm.loginPage("/login").permitAll();
-                    httpForm.defaultSuccessUrl("/home");
-                })
-
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/login").permitAll();
+                    // Cho phép truy cập vào trang đăng nhập, đăng ký và các tài nguyên tĩnh
+                    registry.requestMatchers("/login", "/registration", "/forgot-password", "/css/**", "/js/**", "/images/**").permitAll();
+                    // Tất cả các yêu cầu khác cần phải được xác thực
                     registry.anyRequest().authenticated();
-
+                })
+                .formLogin(httpForm -> {
+                    // Cấu hình trang đăng nhập
+                    httpForm.loginPage("/login"); // Đã có .permitAll() ở trên
+                    // Trang chuyển hướng sau khi đăng nhập thành công
+                    httpForm.defaultSuccessUrl("/home", true);
                 })
                 .build();
     }
