@@ -17,8 +17,10 @@ public class ForgotService {
     private final PasswordEncoder passwordEncoder;
 
     public boolean forgotPass(String email) {
+        System.out.println("Forgot password request for: " + email);
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
+            System.out.println("Email not found: " + email);
             return false; // User not found
         }
 
@@ -27,7 +29,10 @@ public class ForgotService {
         user.setPasswordHash(passwordEncoder.encode(randomPassword));
         userRepository.save(user);
 
-        mailService.sendAccountForgotPassword(user.getUsername(), user.getEmail(), randomPassword);
+        // Không tạo token, chỉ gửi mật khẩu mới qua email
+        System.out.println("Sending mail to: " + user.getEmail());
+        mailService.sendAccountForgotPassword(user.getUsername(), user.getEmail(), randomPassword, null);
+        System.out.println("Mail sent (or attempted) to: " + user.getEmail());
         return true;
     }
 

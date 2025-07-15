@@ -25,7 +25,7 @@ public class LoginController {
     public String Login(@RequestParam String username,
                         @RequestParam String password){
        loginService.checkLogin(username, password);
-       return "redirect:/login/success";
+       return "redirect:/home";
     }
 
 }

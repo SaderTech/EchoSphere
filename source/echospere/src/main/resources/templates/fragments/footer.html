@@ -9,14 +9,17 @@
 </head>
 <body>
 <div th:fragment="mainFooter">
-    <footer class="bg-gray-800 text-white p-4">
-        <div class="container mx-auto text-center">
-            <p class="text-sm">EchoSphere - Web Player Music</p>
-            <div class="mt-2">
-                <a href="#" class="text-gray-400 hover:text-white mx-2">Privacy Policy</a>
-                <a href="#" class="text-gray-400 hover:text-white mx-2">Terms of Service</a>
-            </div>
-        <p>Copyright © 2021 EchoSphere</p>
+    <!-- Footer (inside main to avoid overlap) -->
+    <footer class="bg-gray-900 text-white p-2 border-t border-gray-700">
+        <div class="container mx-auto text-center text-xs inline-flex items-center space-x-2" style="font-family: 'Poppins', sans-serif;">
+            <span>EchoSphere - Web Player Music</span>
+            <span>|</span>
+            <a href="#" class="text-gray-400 hover:text-purple-300">Chính sách bảo mật</a>
+            <span>|</span>
+            <a href="#" class="text-gray-400 hover:text-purple-300">Điều khoản dịch vụ</a>
+            <span>|</span>
+            <span>Copyright © 2025 EchoSphere</span>
+        </div>
     </footer>
 </div>
 </body>

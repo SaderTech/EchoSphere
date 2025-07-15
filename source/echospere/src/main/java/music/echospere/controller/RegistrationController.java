@@ -106,9 +106,7 @@ public class RegistrationController {
             
             userRoleRepository.save(newUserRole);
             
-            // Send email notification
-            mailService.sendAccountForgotPassword(user.getEmail(), user.getUsername(), passwordHash);
-            
+
             return "redirect:/login?success";
         } catch (Exception e) {
             e.printStackTrace();

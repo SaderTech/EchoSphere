@@ -2,41 +2,183 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>EchoSphere-Web Player Music</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>EchoSphere - Web Player Music</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
+    <style>
+        #now-playing-bar {
+            grid-area: now-playing-bar;
+            background-color: #181818;
+            border-top: 1px solid #282828;
+        }
+    </style>
 </head>
-<body>
-    <header th:replace="~{fragments/header.html :: mainHeader}"></header>
-    <div class="container">
-        <div class="content">
-            <div class="Album"></div>
-            <div class="playlist"></div>
-            <div class="trending-song"></div>
-        </div>
-        <div class="slide">
-            <div class="BaiHatYeuThich"></div>
-            <div class="Playlist"></div>
-            <div class="artists"></div>
+<body class="bg-gradient-to-br from-purple-700 via-blue-400 to-gray-900 text-white flex flex-col min-h-screen">
+<!-- Sidebar -->
+<div th:insert="~{fragments/sidebar :: mainSidebar}"></div>
+
+<!-- Header -->
+<div th:insert="~{fragments/header :: mainHeader}"></div>
+
+<!-- Main Content -->
+<main class="container mx-auto p-4 pt-20 ml-0 md:ml-64 flex-1 bg-gray-800 shadow-md rounded-lg pb-20">
+    <!-- Filter Buttons -->
+    <div class="mb-6">
+        <div class="inline-flex space-x-2">
+            <button id="filter-all" data-filter="all" class="filter-btn bg-purple-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200" style="font-family: 'Poppins', sans-serif;">Tất cả</button>
+            <button id="filter-songs" data-filter="songs" class="filter-btn bg-gray-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 border border-gray-700" style="font-family: 'Poppins', sans-serif;">Bài hát</button>
+            <button id="filter-playlists" data-filter="playlists" class="filter-btn bg-gray-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 border border-gray-700" style="font-family: 'Poppins', sans-serif;">Danh sách phát</button>
+            <button id="filter-artists" data-filter="artists" class="filter-btn bg-gray-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 border border-gray-700" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ</button>
         </div>
     </div>
-    <footer th:replace="~{fragments/footer.html :: mainFooter}"></footer>
+
+    <!-- Trending Songs -->
+    <section id="songs-section" class="filter-section mb-8">
+        <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Bài hát thịnh hành</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Song+1" alt="Song 1" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Bài hát 1</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ A</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Song+2" alt="Song 2" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Bài hát 2</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ B</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Song+3" alt="Song 3" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Bài hát 3</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ C</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Song+4" alt="Song 4" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Bài hát 4</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ D</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Playlists -->
+    <section id="playlists-section" class="filter-section mb-8">
+        <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Danh sách phát nổi bật</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Playlist+1" alt="Playlist 1" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Danh sách phát 1</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Tâm trạng chill</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Playlist+2" alt="Playlist 2" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Danh sách phát 2</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nhạc pop sôi động</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Playlist+3" alt="Playlist 3" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Danh sách phát 3</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nhạc indie</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Playlist+4" alt="Playlist 4" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Danh sách phát 4</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Nhạc thư giãn</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Artists -->
+    <section id="artists-section" class="filter-section mb-8">
+        <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ nổi bật</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Artist+1" alt="Artist 1" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ 1</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Pop</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Artist+2" alt="Artist 2" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ 2</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Rock</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Artist+3" alt="Artist 3" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ 3</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Hip Hop</p>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
+                <img src="https://via.placeholder.com/300x200?text=Artist+4" alt="Artist 4" class="w-full h-40 object-cover">
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-900 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'Poppins', sans-serif;">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="p-3">
+                    <h3 class="text-lg font-semibold" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ 4</h3>
+                    <p class="text-sm text-gray-400" style="font-family: 'Poppins', sans-serif;">Electronic</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (inside main to avoid overlap) -->
+    <div th:insert="~{fragments/footer :: mainFooter}"></div>
+</main>
+
+<!-- Player -->
+<div th:insert="~{fragments/playerbar :: mainPlayerBar}"></div>
 </body>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const slide = document.querySelector('.slide');
-        const content = document.querySelector('.content');
-
-        // Simulate loading content
-        setTimeout(() => {
-            slide.innerHTML = '<h1>Welcome to EchoSphere</h1>';
-            content.innerHTML = '<p>Your music journey starts here!</p>';
-        }, 1000);
-    });
-
-    document.addEventListener("click" , function() {
-        const profile = document.querySelector('.profile');
-        profile.classList.toggle('hidden');
-    });
-</script>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar</title>
+</head>
+<body>
+<div th:fragment="mainSidebar">
+<!-- Sidebar -->
+<aside class="fixed top-16 left-0 w-64 h-full bottom-0 bg-gray-900 shadow-lg hidden md:block z-20 border-r border-gray-700" style="padding-top: 15px;
+    margin-top: 11px;">
+    <div class="p-3">
+        <h2 class="text-lg font-bold mb-3" style="font-family: 'Poppins', sans-serif;">Thư viện</h2>
+        <div class="mb-4">
+            <button class="w-full bg-purple-900 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center" style="font-family: 'Poppins', sans-serif;">
+                <i class="fas fa-plus mr-2"></i> Tạo danh sách phát
+            </button>
+        </div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold mb-1" style="font-family: 'Poppins', sans-serif;">Danh sách phát</h3>
+            <ul class="space-y-1">
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-music text-xs text-purple-300 mr-2"></i>Chill Hits</a></li>
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-music text-xs text-purple-300 mr-2"></i>Pop Vibes</a></li>
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-music text-xs text-purple-300 mr-2"></i>Indie Mix</a></li>
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-music text-xs text-purple-300 mr-2"></i>Workout Energy</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-sm font-semibold mb-1" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ gần đây</h3>
+            <ul class="space-y-1">
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-user text-xs text-purple-300 mr-2"></i>Nghệ sĩ A</a></li>
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-user text-xs text-purple-300 mr-2"></i>Nghệ sĩ B</a></li>
+                <li><a href="#" class="block px-2 py-1 hover:bg-gray-700 rounded flex items-center" style="font-family: 'Poppins', sans-serif;"><i class="fas fa-user text-xs text-purple-300 mr-2"></i>Nghệ sĩ C</a></li>
+            </ul>
+        </div>
+    </div>
+</aside>
+</div>
+</body>
+</html>
