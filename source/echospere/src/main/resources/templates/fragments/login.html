@@ -31,6 +31,9 @@
             <p class="text-gray-300 mt-2">Đăng nhập để bắt đầu trải nghiệm</p>
         </div>
 
+        <div id="message-container" class="mb-4">
+        </div>
+
         <form action="/login" method="post" class="space-y-6">
             <div>
                 <label for="username" class="text-sm font-medium text-gray-200 block mb-2">Tài khoản</label>
@@ -84,5 +87,32 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const messageContainer = document.getElementById('message-container');
+
+        if (urlParams.has('success')) {
+            // Tạo thông báo thành công
+            const successDiv = document.createElement('div');
+            successDiv.className = 'bg-green-500 text-white p-3 rounded-md text-center';
+            successDiv.textContent = 'Đăng ký tài khoản thành công! Vui lòng đăng nhập.';
+            messageContainer.appendChild(successDiv);
+
+            // Tự động ẩn thông báo sau 5 giây (tùy chọn)
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+        // Bạn cũng có thể thêm logic để xử lý thông báo lỗi từ Spring Security nếu có (ví dụ: ?error)
+        if (urlParams.has('error')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-500 text-white p-3 rounded-md text-center';
+            errorDiv.textContent = 'Đăng nhập không thành công. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.';
+            messageContainer.appendChild(errorDiv);
+        }
+    });
+</script>
 </body>
 </html>

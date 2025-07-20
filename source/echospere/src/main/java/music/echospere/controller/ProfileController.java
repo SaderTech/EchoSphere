@@ -30,7 +30,7 @@ public class ProfileController {
 
     @PostMapping("/profile/edit")
     public String handleEditProfileForm(Principal principal,
-                                        User updatedUser,
+                                        User updatedUser,//FIX xu ly tung cai bang requerstParam
                                         Model model) {
         if (principal == null) {
             model.addAttribute("error", "Bạn cần đăng nhập để chỉnh sửa trang cá nhân.");
