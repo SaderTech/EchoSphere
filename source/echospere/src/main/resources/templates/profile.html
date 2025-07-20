@@ -156,8 +156,17 @@
         }
     });
 
-    document.getElementById("notification").addEventListener('load',function (){
-      document.getElementById('notification').classList.add('');
+    document.addEventListener('DOMContentLoaded', function() {
+      const errorMessageDiv = document.querySelector('#notification-messages div[th\\:if="${error}"]');
+      const successMessageDiv = document.querySelector('#notification-messages div[th\\:if="${message}"]');
+
+      if (errorMessageDiv) {
+        // Có thể thêm logic tự động ẩn sau 5 giây nếu muốn
+        setTimeout(() => { errorMessageDiv.style.display = 'none'; }, 5000);
+      }
+      if (successMessageDiv) {
+        setTimeout(() => { successMessageDiv.style.display = 'none'; }, 5000); // Tự động ẩn sau 5 giây
+      }
     });
 </script>
 </html>
