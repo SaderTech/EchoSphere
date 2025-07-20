@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     // Cho phép truy cập vào trang đăng nhập, đăng ký và các tài nguyên tĩnh
-                    registry.requestMatchers("/login", "/registration", "/forgot-password", "/change-password", "/css/**", "/js/**", "/images/**").permitAll();
+                    registry.requestMatchers("/login", "/registration", "/forgot-password", "/change-password", "/css/**", "/js/**", "/images/**", "/avatars/**").permitAll();
                     // Tất cả các yêu cầu khác cần phải được xác thực
                     registry.anyRequest().authenticated();
                 })

@@ -1,42 +1,33 @@
 package music.echospere.controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
+import music.echospere.entity.Song;
 import music.echospere.entity.User;
-import music.echospere.repository.UserRepository;
+import music.echospere.repository.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
 public class HomeController {
     private final UserRepository userRepository;
-
-    public HomeController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final ArtistRepository artistRepository;
+    private final SongRepository songRepository;
+    private final AlbumRepository albumRepository;
+    private final GenreRepository genreRepository;
+    private final PlaylistRepository playlistRepository;
+    private final HttpSession session;
 
     @GetMapping("/home")
-    public String home(Principal principal, HttpSession session) {
-        if (principal != null) {
-            Optional<User> userOpt = userRepository.findByUsername(principal.getName());
-            userOpt.ifPresent(user -> session.setAttribute("userID", user.getId()));
-        } else {
-            session.removeAttribute("userID");
-        }
+    public String home(Principal principal, Model model) {
+        List<Song> songs = songRepository.findAll();
+
         return "home";
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session,User user, Model model) {
-        if (session.getAttribute("userID") != null) {
-            session.removeAttribute("userID");
-            model.addAttribute("message", "Bạn đã đăng xuất thành công.");
-        } else {
-            model.addAttribute("message", "Bạn chưa đăng nhập.");
-        }
-        return "home";
-    }
 }
