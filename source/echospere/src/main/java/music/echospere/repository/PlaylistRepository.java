@@ -6,6 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface PlaylistRepository extends JpaRepository<Playlist, Integer> {
     Page<Playlist> findByUser(User user, Pageable pageable);
+    List<Playlist> findByUser(User user);
 }

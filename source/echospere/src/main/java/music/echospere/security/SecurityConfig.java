@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.authorization.SingleResultAuthorizationManager.permitAll;
+
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -45,7 +47,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     // Cho phép truy cập vào trang đăng nhập, đăng ký và các tài nguyên tĩnh
-                    registry.requestMatchers("/login", "/registration", "/forgot-password", "/change-password", "/css/**", "/js/**", "/images/**", "/avatars/**").permitAll();
+                    registry.requestMatchers("/login", "/registration", "/forgot-password", "/change-password", "/css/**", "/js/**", "/images/**", "/avatars/**", "/playlists/add", "/playlistImage/**").permitAll();
                     // Tất cả các yêu cầu khác cần phải được xác thực
                     registry.anyRequest().authenticated();
                 })
@@ -54,6 +56,11 @@ public class SecurityConfig {
                     httpForm.loginPage("/login"); // Đã có .permitAll() ở trên
                     // Trang chuyển hướng sau khi đăng nhập thành công
                     httpForm.defaultSuccessUrl("/home", true);
+                })
+                .logout(logout -> {
+                    // Cấu hình đăng xuất
+                    logout.logoutUrl("/logout");
+                    logout.logoutSuccessUrl("/login?logout=true");
                 })
                 .build();
     }

@@ -20,5 +20,7 @@ public class MvcConfig implements WebMvcConfigurer {
         // Khi có request tới /avatars/**, Spring sẽ tìm file trong thư mục 'file:/path/to/project/uploads/'
         registry.addResourceHandler("/avatars/**")
                 .addResourceLocations("file:/" + uploadPath + "/avatars/");
+
+
     }
 }
