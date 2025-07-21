@@ -7,13 +7,14 @@ import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "songs")
 public class Song {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -32,4 +33,6 @@ public class Song {
     @Column(name = "duration_seconds")
     private Integer durationSeconds;
 
+    @OneToMany(mappedBy = "song")
+    private Set<SongArtist> artists;
 }

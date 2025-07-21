@@ -14,6 +14,12 @@ public class SongGenre {
     @EmbeddedId
     private SongGenreId id;
 
+    @MapsId("songId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "song_id", nullable = false)
+    private Song song;
+
     @MapsId("genreId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

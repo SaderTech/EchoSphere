@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class UserRoleId implements Serializable {
-    private static final long serialVersionUID = 6753224336973513769L;
+    private static final long serialVersionUID = -3749968275720100468L;
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 

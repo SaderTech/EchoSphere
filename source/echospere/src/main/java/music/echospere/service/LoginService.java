@@ -13,7 +13,7 @@ import java.util.Optional;
 public class LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public void checkLogin(String username, String password) {
+    public Optional<User> checkLogin(String username, String password) {
         if (username == null || password == null) {
             throw new IllegalArgumentException("Username and password cannot be null");
         } else if (username.isBlank() || username.isEmpty()) {
@@ -30,5 +30,6 @@ public class LoginService {
         }
         // User found and password matches, proceed with login
         System.out.println("Login successful for user: " + username);
+        return user;
     }
 }

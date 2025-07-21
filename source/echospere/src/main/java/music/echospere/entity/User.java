@@ -17,12 +17,13 @@ import java.util.Collections;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "username", nullable = false, length = 50)
+    @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
 
     @Nationalized
@@ -33,32 +34,30 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @ColumnDefault("getdate()")
-    @Column(name = "registration_date")
+    @Column(name = "registration_date", updatable = false)
     private Instant registrationDate;
 
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    // --- UserDetails Implementation ---
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Or return roles if you have them
+        // TODO: Implement role-based authorities here if needed
+        return Collections.emptyList();
     }
 
     @Override
     public String getPassword() {
         return this.passwordHash;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
     }
 
     @Override

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 
@@ -14,13 +16,17 @@ import java.time.Instant;
 @Table(name = "playlists")
 public class Playlist {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
     @Nationalized
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ColumnDefault("1")
     @Column(name = "is_public")
@@ -30,4 +36,6 @@ public class Playlist {
     @Column(name = "created_date")
     private Instant createdDate;
 
+    @Column(name = "playlist_url", length = 255)
+    private String playlistUrl;
 }

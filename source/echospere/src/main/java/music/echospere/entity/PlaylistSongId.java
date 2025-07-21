@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class PlaylistSongId implements Serializable {
-    private static final long serialVersionUID = -465398159491767926L;
+    private static final long serialVersionUID = -6730980234197486402L;
     @Column(name = "playlist_id", nullable = false)
     private Integer playlistId;
 

@@ -28,10 +28,10 @@
                             <i class="fa-regular fa-bell fa-xl text-yellow-400"></i>
                         </a>
                     </li>
-                    <li th:if="${session.userID == null}">
+                    <li th:if="${currentUser == null}">
                         <a href="/login" class="bg-purple-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200" style="font-family: 'Poppins', sans-serif;">Đăng nhập</a>
                     </li>
-                    <li th:if="${session.userID != null}" class="relative">
+                    <li th:if="${currentUser != null}" class="relative">
                         <div class="dropdown inline-block">
                             <button class="text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200 flex items-center" style="font-family: 'Poppins', sans-serif;">
                                 <i class="fa-regular fa-user fa-xl mr-2"></i>

@@ -23,6 +23,12 @@ public class PlaylistSong {
     @JoinColumn(name = "playlist_id", nullable = false)
     private Playlist playlist;
 
+    @MapsId("songId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "song_id", nullable = false)
+    private Song song;
+
     @ColumnDefault("getdate()")
     @Column(name = "date_added")
     private Instant dateAdded;

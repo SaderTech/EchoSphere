@@ -93,7 +93,7 @@ public class RegistrationController {
             User savedUser = userRepository.save(user);
             
             // Create UserRole with default role "User" (id = 2)
-            Role userRole = roleRepository.findById(2).orElseThrow(() -> 
+            Role userRole = roleRepository.findById(2).orElseThrow(() ->
                 new RuntimeException("Default user role not found"));
             
             UserRole newUserRole = new UserRole();
