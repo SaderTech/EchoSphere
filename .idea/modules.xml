@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/EchoSphere.iml" filepath="$PROJECT_DIR$/.idea/EchoSphere.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/echospere/echospere.iml" filepath="$PROJECT_DIR$/source/echospere/echospere.iml" />
     </modules>
   </component>
 </project>

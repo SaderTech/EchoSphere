@@ -1,5 +1,6 @@
 package music.echospere.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @Entity
 @Table(name = "artists")
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Artist {
     @Id
     @Column(name = "id", nullable = false)

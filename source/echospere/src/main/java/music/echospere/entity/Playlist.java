@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -39,4 +40,7 @@ public class Playlist {
 
     @Column(name = "playlist_url", length = 255)
     private String playlistUrl;
+
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<PlaylistSong> songs;
 }

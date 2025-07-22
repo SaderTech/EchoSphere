@@ -1,6 +1,6 @@
 package music.echospere.controller;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession; // Giữ nguyên nếu bạn vẫn dùng HttpSession ở đâu đó khác
 import lombok.AllArgsConstructor;
 import music.echospere.DTO.filterDTO;
 import music.echospere.entity.*;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.ArrayList; // Thêm import này để khởi tạo danh sách rỗng
 
 @Controller
 @AllArgsConstructor
@@ -25,13 +26,13 @@ public class HomeController {
     private final ArtistRepository artistRepository;
     private final SongRepository songRepository;
     private final AlbumRepository albumRepository;
-    private final PlaylistRepository playlistRepository;
+    private final PlaylistRepository playlistRepository; // Giữ nguyên repository
 
     @GetMapping("/home")
     public String home(@RequestParam(name = "filter", defaultValue = "all") String filter,
                        @RequestParam(name = "page", defaultValue = "0") int page,
                        Model model,
-                       Principal principal) {
+                       Principal principal) { // Principal để lấy thông tin người dùng đăng nhập
 
         int pageSize = 8; // Số lượng item trên mỗi trang
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -41,6 +42,13 @@ public class HomeController {
 
         logger.info("Filter: {}, Page: {}", filter, page);
 
+        // Lấy thông tin người dùng hiện tại
+        User currentUser = null;
+        if (principal != null) {
+            currentUser = userRepository.findByUsername(principal.getName()).orElse(null);
+        }
+
+        // --- Bắt đầu Switch Case ---
         switch (filter) {
             case "songs":
                 Page<Song> songPage = songRepository.findAll(pageable);
@@ -67,14 +75,19 @@ public class HomeController {
                 break;
 
             case "playlists":
-                if (principal != null) {
-                    userRepository.findByUsername(principal.getName()).ifPresent(user -> {
-                        Page<Playlist> playlistPage = playlistRepository.findByUser(user, pageable);
-                        filterData.setPlaylists(playlistPage.getContent());
-                        model.addAttribute("page", playlistPage);
-                        model.addAttribute("title", "Danh sách phát của bạn");
-                        logger.info("Playlists found: {}", playlistPage.getContent().size());
-                    });
+                if (currentUser != null) {
+                    // Lấy các playlist CỦA NGƯỜI DÙNG hiện tại
+                    Page<Playlist> playlistPage = playlistRepository.findByUser(currentUser, pageable);
+                    filterData.setPlaylists(playlistPage.getContent());
+                    model.addAttribute("page", playlistPage);
+                    model.addAttribute("title", "Danh sách phát của bạn");
+                    logger.info("Playlists for user '{}' found: {}", currentUser.getUsername(), playlistPage.getContent().size());
+                } else {
+                    // Nếu không có người dùng, hiển thị thông báo hoặc danh sách rỗng
+                    filterData.setPlaylists(new ArrayList<>());
+                    model.addAttribute("page", Page.empty(pageable)); // Page rỗng
+                    model.addAttribute("title", "Danh sách phát");
+                    logger.warn("Attempted to access 'playlists' filter without a logged-in user.");
                 }
                 break;
 
@@ -82,7 +95,20 @@ public class HomeController {
                 model.addAttribute("songs", songRepository.findAll(PageRequest.of(0, 4)).getContent());
                 model.addAttribute("albums", albumRepository.findAll(PageRequest.of(0, 4)).getContent());
                 model.addAttribute("artists", artistRepository.findAll(PageRequest.of(0, 4)).getContent());
-                model.addAttribute("playlists", playlistRepository.findAll(PageRequest.of(0, 4)).getContent());
+
+                // --- Cập nhật quan trọng ở đây cho filter "all" ---
+                if (currentUser != null) {
+                    // Lấy playlist của người dùng hiện tại cho phần "Playlist của bạn" trên trang chủ
+                    model.addAttribute("playlists", playlistRepository.findByUser(currentUser, PageRequest.of(0, 4)).getContent());
+                    logger.info("User-specific playlists for 'all' filter loaded for user: {}", currentUser.getUsername());
+                } else {
+                    // Nếu không có người dùng đăng nhập, có thể hiển thị một số playlist công khai
+                    // Hoặc đơn giản là một danh sách rỗng
+                    model.addAttribute("playlists", new ArrayList<Playlist>()); // Hoặc playlistRepository.findByIsPublic(true, PageRequest.of(0, 4)).getContent()
+                    logger.info("No user logged in, 'all' filter showing empty playlists or public ones.");
+                }
+                // --- Kết thúc cập nhật quan trọng ---
+
                 logger.info("Default view loaded");
                 break;
         }

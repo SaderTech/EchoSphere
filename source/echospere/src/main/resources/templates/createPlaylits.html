@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>EchoSphere - Thêm Playlist</title>
+    <title th:text="${isEdit ? 'EchoSphere - Chỉnh sửa Playlist' : 'EchoSphere - Thêm Playlist'}"></title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
@@ -28,68 +28,369 @@
             max-width: 100% !important;
             overflow-x: hidden !important;
         }
+        /* Custom styles for song management */
+        .form-input-custom { /* Adjusted for better styling consistency */
+            background-color: #161b22;
+            border-color: #30363d;
+            color: #c9d1d9;
+        }
+        .search-results-list, .current-songs-list {
+            max-height: 300px; /* Limit height for scrollable lists */
+            overflow-y: auto;
+            border-radius: 0.5rem;
+            border: 1px solid #30363d;
+        }
+        .song-item, .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #30363d;
+            background-color: #161b22;
+        }
+        .song-item:last-child, .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .song-item:hover, .search-result-item:hover {
+            background-color: #282828;
+            cursor: pointer;
+        }
+        .song-info {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+        .song-title {
+            font-weight: 600;
+            color: #c9d1d9;
+        }
+        .song-artist {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+        .action-button {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .add-button {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+        }
+        .add-button:hover {
+            background-color: #16a34a; /* green-600 */
+        }
+        .remove-button {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .remove-button:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+        .no-results-message {
+            text-align: center;
+            color: #9ca3af;
+            padding: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-700 via-blue-400 to-gray-900 text-white flex flex-col min-h-screen">
-<!-- Sidebar -->
 <div th:insert="~{fragments/sidebar :: mainSidebar}"></div>
 
-<!-- Header -->
 <div th:insert="~{fragments/header :: mainHeader}"></div>
 
-<!-- Main Content -->
 <main class="container mx-auto p-4 pt-20 ml-0 md:ml-64 flex-1 bg-gray-800 shadow-md rounded-lg pb-20 min-w-0">
     <section>
-        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="font-family: 'Poppins', sans-serif;">Thêm Playlist Mới</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="font-family: 'Poppins', sans-serif;"
+            th:text="${isEdit ? 'Chỉnh sửa Playlist' : 'Thêm Playlist Mới'}"></h2>
 
-        <!-- Success/Error Messages -->
-        <div th:if="${successMessage}" class="mb-4 p-4 bg-green-100 text-green-800 rounded-lg flex items-center">
+        <div th:if="${successMessage}" class="mb-4 p-4 bg-green-700 text-white rounded-lg flex items-center">
             <i class="fas fa-check-circle mr-2"></i>
             <span th:text="${successMessage}"></span>
         </div>
-        <div th:if="${errorMessage}" class="mb-4 p-4 bg-red-100 text-red-800 rounded-lg flex items-center">
+        <div th:if="${errorMessage}" class="mb-4 p-4 bg-red-700 text-white rounded-lg flex items-center">
             <i class="fas fa-exclamation-circle mr-2"></i>
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <!-- Form -->
-        <form th:action="@{/playlists/add}" th:object="${playlistForm}" method="post" enctype="multipart/form-data" class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700" style="width: 1050px;">
-            <!-- Hidden ID -->
+        <form th:action="${isEdit ? '/playlists/edit/' + playlistForm.id : '/playlists/add'}"
+              th:object="${playlistForm}"
+              method="post"
+              enctype="multipart/form-data"
+              class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700"
+              style="max-width: 1050px;">
+
             <input th:field="*{id}" type="hidden" id="id" name="id">
 
-            <!-- Playlist Name -->
             <div class="mb-4">
-                <label for="namePlaylist" class="block text-sm font-medium text-gray-300 mb-2" style="font-family: 'Poppins', sans-serif;">Tên Playlist</label>
-                <input th:field="*{namePlaylist}" type="text" id="namePlaylist" name="namePlaylist" class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900" placeholder="Nhập tên playlist" required>
+                <label for="name" class="block text-sm font-medium text-gray-300 mb-2" style="font-family: 'Poppins', sans-serif;">Tên Playlist</label>
+                <input th:field="*{namePlaylist}" type="text" id="name" name="name"
+                       class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900 form-input-custom"
+                       placeholder="Nhập tên playlist" required>
                 <div th:if="${#fields.hasErrors('namePlaylist')}" class="text-red-500 text-sm mt-1" th:errors="*{namePlaylist}"></div>
             </div>
 
-            <!-- Cover Image -->
             <div class="mb-4">
                 <label for="coverImage" class="block text-sm font-medium text-gray-300 mb-2" style="font-family: 'Poppins', sans-serif;">Hình ảnh bìa</label>
-                <input type="file" id="coverImage" name="coverImage" accept="image/*" class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900">
-                <p class="text-sm text-gray-500 mt-1">Hoặc nhập URL hình ảnh (tùy chọn):</p>
-                <input th:field="*{playlistUrl}" type="url" id="playlistUrl" name="playlistUrl" class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900 mt-2" placeholder="Nhập URL hình ảnh">
+                <input type="file" id="coverImage" name="coverImage" accept="image/*"
+                       class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-900 file:text-white hover:file:bg-purple-800 transition-colors duration-200">
+                <p class="text-sm text-gray-500 mt-1">Chọn ảnh mới hoặc nhập URL hình ảnh (tùy chọn).</p>
+
+                <div th:if="${isEdit and playlistForm.playlistUrl != null and playlistForm.playlistUrl != ''}" class="mt-4">
+                    <p class="text-sm font-medium text-gray-300 mb-2">Ảnh bìa hiện tại:</p>
+                    <img th:src="@{${playlistForm.playlistUrl}}" alt="Current Playlist Cover" class="w-32 h-32 object-cover rounded-lg shadow-md border border-gray-700">
+                    <input type="hidden" th:field="*{playlistUrl}" />
+                </div>
             </div>
 
-            <!-- Public Status -->
             <div class="mb-4">
                 <label class="flex items-center">
-                    <input th:field="*{isPublic}" type="checkbox" name="isPublic" class="mr-2 h-4 w-4 text-purple-900 focus:ring-purple-900 border-gray-700 rounded" checked>
+                    <input th:field="*{isPublic}" type="checkbox" name="isPublic"
+                           class="mr-2 h-4 w-4 text-purple-900 focus:ring-purple-900 border-gray-700 rounded" checked>
                     <span class="text-sm text-gray-300" style="font-family: 'Poppins', sans-serif;">Công khai playlist</span>
                 </label>
             </div>
 
-            <!-- Buttons -->
             <div class="flex justify-end space-x-4">
                 <a th:href="@{/home}" class="px-6 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors duration-200 text-sm md:text-base font-medium" style="font-family: 'Poppins', sans-serif;">Hủy</a>
-                <button type="submit" class="px-6 py-3 bg-purple-900 text-white rounded-full hover:bg-purple-800 transition-colors duration-200 text-sm md:text-base font-medium" style="font-family: 'Poppins', sans-serif;">Tạo Playlist</button>
+                <button type="submit" class="px-6 py-3 bg-purple-900 text-white rounded-full hover:bg-purple-800 transition-colors duration-200 text-sm md:text-base font-medium" style="font-family: 'Poppins', sans-serif;"
+                        th:text="${isEdit ? 'Cập nhật Playlist' : 'Tạo Playlist'}"></button>
             </div>
         </form>
+
+        <div th:if="${isEdit}" class="mt-8 pt-8 border-t border-gray-700" style="max-width: 1050px;">
+            <h3 class="text-2xl md:text-2xl font-bold text-white mb-4" style="font-family: 'Poppins', sans-serif;">Quản lý Bài hát</h3>
+
+            <div class="mb-6">
+                <label for="songSearchInput" class="block text-sm font-medium text-gray-300 mb-2" style="font-family: 'Poppins', sans-serif;">Tìm kiếm bài hát</label>
+                <div class="flex">
+                    <input type="text" id="songSearchInput"
+                           class="form-input-custom flex-grow p-3 rounded-l-lg focus:ring-2 focus:ring-purple-900"
+                           placeholder="Tìm kiếm theo tên bài hát hoặc nghệ sĩ">
+                    <button id="searchButton" type="button"
+                            class="bg-purple-900 hover:bg-purple-800 text-white p-3 rounded-r-lg font-semibold transition-colors duration-200">
+                        Tìm kiếm
+                    </button>
+                </div>
+                <div id="searchResults" class="search-results-list mt-2 bg-gray-900">
+                    <p id="noSearchResults" class="no-results-message hidden">Không tìm thấy bài hát nào.</p>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <h4 class="text-xl font-bold text-white mb-3" style="font-family: 'Poppins', sans-serif;">Bài hát trong Playlist này</h4>
+                <div id="currentPlaylistSongs" class="current-songs-list bg-gray-900 p-2">
+                    <p id="noSongsInPlaylist" class="no-results-message">Playlist này chưa có bài hát nào.</p>
+                </div>
+            </div>
+        </div>
     </section>
 </main>
 
-<!-- Player -->
 <div th:insert="~{fragments/playerbar :: mainPlayerBar}"></div>
+
+<script th:inline="javascript">
+    // Get CSRF Token from meta tag (Spring Security typically provides this)
+    const csrfToken = /*[[${_csrf?.token}]]*/ 'default_csrf_token_if_not_security';
+    const csrfHeader = /*[[${_csrf?.headerName}]]*/ 'X-CSRF-TOKEN';
+    // Get playlist ID and edit mode flag from Thymeleaf model
+    const playlistId = /*[[${playlistForm.id}]]*/ null;
+    const isEditMode = /*[[${isEdit}]]*/ false;
+
+    // Element references
+    const songSearchInput = document.getElementById('songSearchInput');
+    const searchButton = document.getElementById('searchButton');
+    const searchResultsDiv = document.getElementById('searchResults');
+    const noSearchResultsMessage = document.getElementById('noSearchResults');
+    const currentPlaylistSongsDiv = document.getElementById('currentPlaylistSongs');
+    const noSongsInPlaylistMessage = document.getElementById('noSongsInPlaylist');
+
+    // --- Event Listeners & Initial Load ---
+    if (isEditMode) {
+        searchButton.addEventListener('click', performSongSearch);
+        songSearchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent form submission
+                performSongSearch();
+            }
+        });
+        // Load existing songs when in edit mode
+        updateCurrentPlaylistSongs();
+    }
+
+    // --- Core Functions ---
+
+    /**
+     * Performs an AJAX search for songs based on the input query.
+     */
+    async function performSongSearch() {
+        const query = songSearchInput.value.trim();
+        if (query.length < 2) { // Require at least 2 characters for search
+            searchResultsDiv.innerHTML = '<p class="no-results-message">Nhập ít nhất 2 ký tự để tìm kiếm.</p>';
+            noSearchResultsMessage.classList.add('hidden');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/playlists/api/songs/search?query=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const songs = await response.json();
+            displaySearchResults(songs);
+        } catch (error) {
+            console.error('Error searching songs:', error);
+            searchResultsDiv.innerHTML = '<p class="no-results-message text-red-400">Lỗi khi tìm kiếm bài hát.</p>';
+        }
+    }
+
+    /**
+     * Displays the search results in the UI.
+     * @param {Array<Object>} songs - An array of song objects.
+     */
+    function displaySearchResults(songs) {
+        searchResultsDiv.innerHTML = ''; // Clear previous results
+        if (!songs || songs.length === 0) {
+            noSearchResultsMessage.classList.remove('hidden');
+            searchResultsDiv.appendChild(noSearchResultsMessage);
+            return;
+        }
+        noSearchResultsMessage.classList.add('hidden');
+
+        songs.forEach(song => {
+            const songItem = document.createElement('div');
+            songItem.className = 'search-result-item';
+            songItem.innerHTML = `
+                <div class="song-info">
+                    <div class="song-title">${song.title}</div>
+                    <div class="song-artist">
+                        ${song.artists && song.artists.length > 0 ? song.artists.map(a => a.name).join(', ') : 'Nghệ sĩ không rõ'}
+                    </div>
+                </div>
+                <button class="add-button action-button" data-song-id="${song.id}">Thêm</button>
+            `;
+            searchResultsDiv.appendChild(songItem);
+
+            // Attach event listener to the "Add" button
+            songItem.querySelector('.add-button').addEventListener('click', () => addSongToCurrentPlaylist(song.id, song.title));
+        });
+    }
+
+    /**
+     * Adds a song to the current playlist via AJAX.
+     * @param {number} songId - The ID of the song to add.
+     * @param {string} songTitle - The title of the song (for confirmation/messages).
+     */
+    async function addSongToCurrentPlaylist(songId, songTitle) {
+        if (!playlistId) { // Should not happen if in edit mode
+            alert("Lỗi: Không tìm thấy ID playlist.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/playlists/api/songs/addToPlaylist?playlistId=${playlistId}&songId=${songId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken // Include CSRF token
+                }
+            });
+            const result = await response.json(); // Server sends JSON response
+            if (response.ok) {
+                alert(`${result.message}`);
+                updateCurrentPlaylistSongs(); // Refresh the list of songs in the playlist
+            } else {
+                alert(`Lỗi khi thêm: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error adding song to playlist:', error);
+            alert('Lỗi khi thêm bài hát vào playlist.');
+        }
+    }
+
+    /**
+     * Removes a song from the current playlist via AJAX.
+     * @param {number} songId - The ID of the song to remove.
+     * @param {string} songTitle - The title of the song (for confirmation/messages).
+     */
+    async function removeSongFromCurrentPlaylist(songId, songTitle) {
+        if (!playlistId) return;
+
+        if (!confirm(`Bạn có chắc muốn xóa bài hát "${songTitle}" khỏi playlist?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/playlists/api/songs/removeFromPlaylist?playlistId=${playlistId}&songId=${songId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken // Include CSRF token
+                }
+            });
+            const result = await response.json(); // Server sends JSON response
+            if (response.ok) {
+                alert(`${result.message}`);
+                updateCurrentPlaylistSongs(); // Refresh the list of songs in the playlist
+            } else {
+                alert(`Lỗi khi xóa: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error removing song from playlist:', error);
+            alert('Lỗi khi xóa bài hát khỏi playlist.');
+        }
+    }
+
+    /**
+     * Fetches and updates the list of songs currently in the playlist.
+     */
+    async function updateCurrentPlaylistSongs() {
+        if (!playlistId) return;
+
+        try {
+            const response = await fetch(`/playlists/api/${playlistId}/songs`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const songs = await response.json(); // This should be a Set<Song> from the backend
+            displayCurrentPlaylistSongs(songs);
+        } catch (error) {
+            console.error('Error fetching current playlist songs:', error);
+            currentPlaylistSongsDiv.innerHTML = '<p class="no-results-message text-red-400">Lỗi khi tải bài hát trong playlist.</p>';
+        }
+    }
+
+    /**
+     * Displays the current songs in the playlist.
+     * @param {Array<Object>} songs - An array of song objects currently in the playlist.
+     */
+    function displayCurrentPlaylistSongs(songs) {
+        currentPlaylistSongsDiv.innerHTML = ''; // Clear previous content
+        if (!songs || songs.length === 0) {
+            noSongsInPlaylistMessage.classList.remove('hidden');
+            currentPlaylistSongsDiv.appendChild(noSongsInPlaylistMessage);
+            return;
+        }
+        noSongsInPlaylistMessage.classList.add('hidden');
+
+        songs.forEach(song => {
+            const songItem = document.createElement('div');
+            songItem.className = 'song-item';
+            songItem.innerHTML = `
+                <div class="song-info">
+                    <div class="song-title">${song.title}</div>
+                    <div class="song-artist">
+                        ${song.artists && song.artists.length > 0 ? song.artists.map(a => a.name).join(', ') : 'Nghệ sĩ không rõ'}
+                    </div>
+                </div>
+                <button class="remove-button action-button" data-song-id="${song.id}">Xóa</button>
+            `;
+            currentPlaylistSongsDiv.appendChild(songItem);
+
+            // Attach event listener to the "Remove" button
+            songItem.querySelector('.remove-button').addEventListener('click', () => removeSongFromCurrentPlaylist(song.id, song.title));
+        });
+    }
+</script>
 </body>
 </html>
