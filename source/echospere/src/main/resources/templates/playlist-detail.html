@@ -20,6 +20,7 @@
       align-items: center;
       padding: 12px 0;
       border-bottom: 1px solid #30363d;
+      cursor: pointer; /* Add cursor pointer for better UX */
     }
     .song-item:last-child {
       border-bottom: none;
@@ -82,11 +83,10 @@
         <button class="ml-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors duration-200">
           <i class="fas fa-play"></i> Play
         </button>
-        <!-- THÊM NÚT CHỈNH SỬA Ở ĐÂY -->
         <a th:if="${#authentication.name == playlist.user.username}"
            th:href="@{/playlists/edit/{id}(id=${playlist.id})}"
            class="ml-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-full transition-colors duration-200 inline-block">
-            <i class="fas fa-edit"></i> Chỉnh sửa
+          <i class="fas fa-edit"></i> Chỉnh sửa
         </a>
       </div>
     </div>
@@ -95,7 +95,13 @@
   <section class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
     <h2 class="text-2xl font-bold mb-4">Các bài hát trong Playlist</h2>
     <div th:if="${songs != null and not #sets.isEmpty(songs)}">
-      <div th:each="song, i : ${songs}" class="song-item hover:bg-gray-700 rounded-md transition-colors duration-200">
+      <div th:each="song, i : ${songs}"
+           class="song-item hover:bg-gray-700 rounded-md transition-colors duration-200"
+           th:data-song-id="${song.id}"
+           th:data-song-url="${song.songUrl}"
+           th:data-song-title="${song.title}"
+           th:data-song-artists="${song.artistsJoined}"
+           th:data-song-cover-art="${song.album?.coverArtUrl ?: 'https://via.placeholder.com/300x200?text=Song'}" onclick="playSongFromData(this)">
         <span class="song-index" th:text="${i.index + 1}">1</span>
         <div class="song-info">
           <div class="song-title" th:text="${song.title}">Tên Bài Hát</div>
@@ -116,6 +122,47 @@
   </section>
 </main>
 
-<div th:insert="~{fragments/playerbar :: mainPlayerBar}"></div>
+<div th:replace="~{fragments/playerbar :: mainPlayerBar}"></div>
+<script>
+  // Get references to player elements once when the page loads
+  const audioPlayer = document.getElementById('player-audio');
+  const audioSource = document.getElementById('player-source');
+  const titleElement = document.getElementById('player-title');
+  const artistElement = document.getElementById('player-artist');
+  const albumArtElement = document.getElementById('player-art');
+
+  // Function to play a song, reading data from data-* attributes
+  function playSongFromData(element) {
+    // Read values directly from the data attributes of the clicked element
+    const songId = element.dataset.songId;
+    const songUrl = element.dataset.songUrl;
+    const title = element.dataset.songTitle;
+    const artists = element.dataset.songArtists;
+    // Get the album cover image URL from the new data attribute
+    const coverArtUrl = element.dataset.songCoverArt; // MODIFIED THIS LINE
+
+    console.log(`Bắt đầu phát: ID=${songId}, Title=${title}, URL=${songUrl}, CoverArt=${coverArtUrl}`);
+
+    if (songUrl && songUrl !== 'null' && songUrl.trim() !== '') {
+      // 1. Update information on the player bar
+      albumArtElement.src = coverArtUrl || 'https://via.placeholder.com/64x64?text=No+Art'; // Fallback for album art
+      titleElement.textContent = title || 'Tên bài hát'; // Fallback text
+      artistElement.textContent = artists || 'Nghệ sĩ'; // Fallback text
+
+      // 2. Change audio source and reload the audio player
+      audioSource.src = songUrl;
+      audioPlayer.load(); // Essential to load the new source
+
+      // 3. Play the music
+      audioPlayer.play().catch(error => {
+        console.error('Lỗi khi cố gắng phát nhạc:', error);
+        alert('Không thể phát bài hát này. Vui lòng kiểm tra lại đường dẫn file. (Có thể do trình duyệt chặn tự động phát).');
+      });
+    } else {
+      console.warn('Không có URL hợp lệ cho bài hát ID:', songId);
+      alert('Bài hát này không có file âm thanh để phát.');
+    }
+  }
+</script>
 </body>
 </html>

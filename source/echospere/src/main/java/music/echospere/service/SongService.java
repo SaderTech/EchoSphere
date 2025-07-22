@@ -26,4 +26,8 @@ public class SongService {
     public Optional<Song> getSongById(int id) {
         return songRepository.findById(id);
     }
+
+    public Song getDefaultSong() {
+        return songRepository.findById(1).orElse(null); // Giả sử bài hát mặc định có ID là 1
+    }
 }

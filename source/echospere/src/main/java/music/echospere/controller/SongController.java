@@ -2,31 +2,32 @@ package music.echospere.controller;
 
 import music.echospere.entity.Song;
 import music.echospere.service.SongService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/songs")
 public class SongController {
-    @Autowired
-    private SongService songService;
+    private static final Logger logger = LoggerFactory.getLogger(SongController.class);
 
-    @GetMapping("/play/{id}")
-    public String playSong  (Model model, @PathVariable("id") int id) {
-        // Lấy thông tin bài hát từ service
-        Optional<Song> songOptional = songService.getSongById(id);
+    private final SongService songService;
 
-        if (songOptional.isPresent()) {
-            model.addAttribute("song", songOptional.get());
-            return "fragments/playerbar"; // Trả về view playSong.html
+    public SongController(SongService songService) {
+        this.songService = songService;
+    }
+
+    @GetMapping("/homesong")
+    public String home(Model model) {
+        Song song = songService.getDefaultSong(); // Thay bằng logic thực tế để lấy bài hát
+        if (song == null) {
+            logger.warn("Không tìm thấy bài hát cho trang home");
+            model.addAttribute("song", null);
         } else {
-            return "redirect:login/home"; // Nếu không tìm thấy bài hát, chuyển hướng về danh sách bài hát
+            logger.info("Bài hát được tải: {}", song.getTitle());
+            model.addAttribute("song", song);
         }
+        return "home"; // Ánh xạ tới home.html
     }
 }

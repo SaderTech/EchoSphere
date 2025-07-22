@@ -19,15 +19,12 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-700 via-blue-400 to-gray-900 text-white flex flex-col min-h-screen">
-<!-- Sidebar -->
+
 <div th:insert="~{fragments/sidebar :: mainSidebar}"></div>
 
-<!-- Header -->
 <div th:insert="~{fragments/header :: mainHeader}"></div>
 
-<!-- Main Content -->
 <main class="container mx-auto p-4 pt-20 ml-0 md:ml-64 flex-1 bg-gray-800 shadow-md rounded-lg pb-20">
-    <!-- Filter Buttons -->
     <div class="mb-6">
         <div class="inline-flex space-x-2">
             <a th:href="@{/home}" th:classappend="${currentFilter == 'all' ? 'filter-btn-active' : 'bg-gray-800 border border-gray-700'}" class="filter-btn text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200" style="font-family: 'Poppins', sans-serif;">Tất cả</a>
@@ -38,35 +35,38 @@
         </div>
     </div>
 
-    <!-- ===== 'ALL' VIEW (Featured content) ===== -->
     <div th:if="${currentFilter == 'all'}">
-        <!-- Trending Songs -->
         <section class="mb-8">
             <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Bài hát thịnh hành</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <div th:each="song : ${songs}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
-                    <img th:src="${song.album?.coverArtUrl ?: 'https://via.placeholder.com/300x200?text=Song'}" alt="Album Art">
-                    <div class="p-3">
-                        <h3 class="text-lg font-semibold" th:text="${song.title}">Tên bài hát</h3>
-                        <p class="text-sm text-gray-400" th:text="${!#lists.isEmpty(song.artists) ? #strings.listJoin(song.artists.![artist.name], ', ') : 'Unknown Artist'}">Tên nghệ sĩ</p>
+                    <div class="cursor-pointer"
+                         th:data-song-id="${song.id}"
+                         th:data-song-url="${song.songUrl}"
+                         th:data-song-title="${song.title}"
+                         th:data-song-artists="${!#lists.isEmpty(song.artists) ? #strings.listJoin(song.artists.![artist.name], ', ') : 'Unknown Artist'}"
+                         onclick="playSongFromData(this)">
+                        <img th:src="${song.album?.coverArtUrl ?: 'https://via.placeholder.com/300x200?text=Song'}" alt="Album Art" class="w-full h-40 object-cover">
+                        <div class="p-3">
+                            <h3 class="text-lg font-semibold" th:text="${song.title}">Tên bài hát</h3>
+                            <p class="text-sm text-gray-400" th:text="${!#lists.isEmpty(song.artists) ? #strings.listJoin(song.artists.![artist.name], ', ') : 'Unknown Artist'}">Tên nghệ sĩ</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- Featured Albums -->
         <section class="mb-8">
             <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Album nổi bật</h2>
-             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <div th:each="album : ${albums}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-xl hover:bg-gray-700 transition-all duration-200 border border-gray-700">
                     <img th:src="${album.coverArtUrl != null ? album.coverArtUrl : 'https://via.placeholder.com/300x200?text=Album'}" alt="Album" class="w-full h-40 object-cover">
                     <div class="p-3">
                         <h3 class="text-lg font-semibold" th:text="${album.title}">Tên Album</h3>
-                         <p class="text-sm text-gray-400" th:text="${album.artist?.name}">Tên nghệ sĩ</p>
+                        <p class="text-sm text-gray-400" th:text="${album.artist?.name}">Tên nghệ sĩ</p>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- Featured Artists -->
         <section class="mb-8">
             <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Nghệ sĩ nổi bật</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -76,7 +76,6 @@
                 </div>
             </div>
         </section>
-        <!-- Your Playlists -->
         <section class="mb-8" th:if="${playlists != null and not #lists.isEmpty(playlists)}">
             <h2 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif;">Playlist của bạn</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -90,17 +89,20 @@
         </section>
     </div>
 
-    <!-- ===== FILTERED VIEW (Paginated list) ===== -->
     <div th:if="${currentFilter != 'all'}" class="mb-8">
         <section>
             <h2 class="text-2xl md:text-3xl font-bold mb-6" style="font-family: 'Poppins', sans-serif;" th:text="${title}"></h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 !grid" th:if="${filterData != null}">
 
-                <div th:switch="${currentFilter}">
+            <div th:switch="${currentFilter}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 !grid" th:if="${filterData != null}">
 
-                    <!-- Songs -->
-                    <div th:case="'songs'">
-                        <div th:each="item : ${filterData.songs}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                <div th:case="'songs'">
+                    <div th:each="item : ${filterData.songs}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                        <div class="cursor-pointer"
+                             th:data-song-id="${item.id}"
+                             th:data-song-url="${item.songUrl}"
+                             th:data-song-title="${item.title}"
+                             th:data-song-artists="${!#lists.isEmpty(item.artists) ? #strings.listJoin(item.artists.![artist.name], ', ') : 'Unknown Artist'}"
+                             onclick="playSongFromData(this)">
                             <img th:src="${item.album?.coverArtUrl != null ? item.album.coverArtUrl : 'https://via.placeholder.com/300x200?text=Song'}" alt="Song" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.title}">Tên bài hát</h3>
@@ -108,50 +110,50 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Albums -->
-                    <div th:case="'albums'">
-                        <div th:each="item : ${filterData.albums}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
-                            <img th:src="${item.coverArtUrl != null ? item.coverArtUrl : 'https://via.placeholder.com/300x200?text=Album'}" alt="Album" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.title}">Tên Album</h3>
-                                <p class="text-sm text-gray-400 truncate" th:text="${item.artist?.name ?: 'Unknown Artist'}">Tên nghệ sĩ</p>
-                            </div>
+                <div th:case="'albums'">
+                    <div th:each="item : ${filterData.albums}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                        <img th:src="${item.coverArtUrl != null ? item.coverArtUrl : 'https://via.placeholder.com/300x200?text=Album'}" alt="Album" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.title}">Tên Album</h3>
+                            <p class="text-sm text-gray-400 truncate" th:text="${item.artist?.name ?: 'Unknown Artist'}">Tên nghệ sĩ</p>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Artists -->
-                    <div th:case="'artists'">
-                        <div th:each="item : ${filterData.artists}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
-                            <img th:src="${item.profileImageUrl != null ? item.profileImageUrl : 'https://via.placeholder.com/300x200?text=Artist'}" alt="Artist" class="w-full h-48 object-cover rounded-full mx-auto">
-                            <div class="p-4 text-center">
-                                <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.name}">Tên nghệ sĩ</h3>
-                            </div>
+                <div th:case="'artists'">
+                    <div th:each="item : ${filterData.artists}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                        <img th:src="${item.profileImageUrl != null ? item.profileImageUrl : 'https://via.placeholder.com/300x200?text=Artist'}" alt="Artist" class="w-full h-48 object-cover rounded-full mx-auto">
+                        <div class="p-4 text-center">
+                            <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.name}">Tên nghệ sĩ</h3>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Playlists -->
-                    <div th:case="'playlists'">
-                        <div th:each="item : ${filterData.playlists}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                <div th:case="'playlists'">
+                    <div th:each="item : ${filterData.playlists}" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg group relative hover:shadow-2xl hover:bg-gray-700 transition-all duration-300 border border-gray-700 transform hover:-translate-y-1">
+                        <a th:href="@{/playlists/{id}(id=${item.id})}" class="block">
                             <img th:src="${item.playlistUrl != null ? item.playlistUrl : 'https://via.placeholder.com/300x200?text=Playlist'}" alt="Playlist" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <h3 class="text-base md:text-lg font-semibold truncate" th:text="${item.name}">Tên Playlist</h3>
                             </div>
-                        </div>
+                        </a>
                     </div>
+                </div>
 
+                <div th:case="*">
+                    <p class="text-center text-gray-400 py-4 col-span-full">Không có dữ liệu cho bộ lọc này.</p>
                 </div>
             </div>
 
-            <!-- Empty State -->
-            <div th:if="${filterData == null or #lists.isEmpty(filterData.songs) and #lists.isEmpty(filterData.albums) and #lists.isEmpty(filterData.artists) and #lists.isEmpty(filterData.playlists)}" class="text-center text-gray-400 py-12">
+            <div th:if="${filterData == null or (#lists.isEmpty(filterData.songs) and #lists.isEmpty(filterData.albums) and #lists.isEmpty(filterData.artists) and #lists.isEmpty(filterData.playlists))}" class="text-center text-gray-400 py-12">
                 <i class="fas fa-exclamation-circle text-4xl mb-4 text-purple-400"></i>
                 <p class="text-lg md:text-xl" style="font-family: 'Poppins', sans-serif;">Không tìm thấy kết quả nào.</p>
                 <p class="text-sm text-gray-500 mt-2">Hãy thử tìm kiếm với từ khóa khác hoặc kiểm tra lại bộ lọc!</p>
             </div>
         </section>
 
-        <!-- Pagination Controls -->
         <div th:if="${page != null and page.totalPages > 1}" class="mt-8 flex justify-center items-center space-x-4 text-white" style="font-family: 'Poppins', sans-serif;">
             <a th:if="${page.hasPrevious()}" th:href="@{/home(filter=${currentFilter}, page=${page.number - 1})}" class="px-6 py-3 bg-gray-700 rounded-full hover:bg-purple-900 transition-colors duration-200 text-sm md:text-base font-medium">« Trang trước</a>
             <span th:unless="${page.hasPrevious()}" class="px-6 py-3 bg-gray-800 text-gray-500 rounded-full cursor-not-allowed text-sm md:text-base">« Trang trước</span>
@@ -162,7 +164,49 @@
     </div>
 </main>
 
-<!-- Player -->
-<div th:insert="~{fragments/playerbar :: mainPlayerBar}"></div>
+<div th:replace="~{fragments/playerbar :: mainPlayerBar}"></div>
+
+<script>
+    // Get references to player elements once when the page loads
+    const audioPlayer = document.getElementById('player-audio');
+    const audioSource = document.getElementById('player-source');
+    const titleElement = document.getElementById('player-title');
+    const artistElement = document.getElementById('player-artist');
+    const albumArtElement = document.getElementById('player-art');
+
+    // Function to play a song, reading data from data-* attributes
+    function playSongFromData(element) {
+        // Read values directly from the data attributes of the clicked element
+        const songId = element.dataset.songId;
+        const songUrl = element.dataset.songUrl;
+        const title = element.dataset.songTitle;
+        const artists = element.dataset.songArtists;
+
+        // Get the album cover image URL from the <img> tag inside the clicked element
+        const coverArtUrl = element.querySelector('img').src;
+
+        console.log(`Bắt đầu phát: ID=${songId}, Title=${title}, URL=${songUrl}`);
+
+        if (songUrl && songUrl !== 'null' && songUrl.trim() !== '') {
+            // 1. Update information on the player bar
+            albumArtElement.src = coverArtUrl;
+            titleElement.textContent = title || 'Tên bài hát'; // Fallback text
+            artistElement.textContent = artists || 'Nghệ sĩ'; // Fallback text
+
+            // 2. Change audio source and reload the audio player
+            audioSource.src = songUrl;
+            audioPlayer.load(); // Essential to load the new source
+
+            // 3. Play the music
+            audioPlayer.play().catch(error => {
+                console.error('Lỗi khi cố gắng phát nhạc:', error);
+                alert('Không thể phát bài hát này. Vui lòng kiểm tra lại đường dẫn file.');
+            });
+        } else {
+            console.warn('Không có URL hợp lệ cho bài hát ID:', songId);
+            alert('Bài hát này không có file âm thanh để phát.');
+        }
+    }
+</script>
 </body>
 </html>
