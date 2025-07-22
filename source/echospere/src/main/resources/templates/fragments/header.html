@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Header</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/390e5be97b.js" crossorigin="anonymous"></script>
-</head>
-<body>
 <div th:fragment="mainHeader">
-    <!-- Header -->
     <header class="fixed top-0 left-0 w-full bg-gray-900 z-10 border-b border-gray-700">
         <nav>
             <div class="container mx-auto flex justify-between items-center p-4">
@@ -20,7 +10,16 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="/home" class="hover:text-purple-300"><i class="fa-solid fa-house fa-xl"></i></a>
-                    <input type="text" placeholder="Tìm kiếm bài hát, nghệ sĩ..." class="w-64 bg-gray-800 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300" style="font-family: 'Poppins', sans-serif;">
+
+                    <form action="/search" method="get" class="flex items-center">
+                        <input type="text"
+                               name="query"  placeholder="Tìm kiếm bài hát, nghệ sĩ..."
+                               class="w-64 bg-gray-800 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                               style="font-family: 'Poppins', sans-serif;">
+                        <button type="submit" class="ml-2 p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
                 </div>
                 <ul class="flex items-center space-x-4">
                     <li>
@@ -41,8 +40,7 @@
                                 <div class="bg-gray-700 shadow-lg rounded-lg py-2">
                                     <a href="/profile" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Hồ sơ</a>
                                     <a href="/admin" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Quản trị (ADMIN)</a>
-                                    <a href="/account" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Tài khoản</a>
-                                    <a href="/settings" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Cài đặt</a>
+                                    <a href="/change-password" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Đổi mật khẩu</a>
                                     <hr class="my-1 border-gray-600">
                                     <a href="/logout" class="block px-4 py-2 hover:bg-gray-600" style="font-family: 'Poppins', sans-serif;">Đăng xuất</a>
                                 </div>
@@ -77,8 +75,8 @@
                 document.addEventListener('click', function () {
                     document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
                         menu.classList.add('hidden');
-                        });
                     });
+                });
 
 
                 // Filter functionality (for home.html)
@@ -106,5 +104,3 @@
         </script>
     </header>
 </div>
-</body>
-</html>

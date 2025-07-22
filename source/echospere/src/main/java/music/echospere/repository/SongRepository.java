@@ -1,6 +1,9 @@
 package music.echospere.repository;
 
 import music.echospere.entity.Song;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +16,7 @@ import java.util.Set;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Integer> {
     List<Song> findByTitleContainingIgnoreCase(String title);
+    Page<Song> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     // SỬA LẠI PHƯƠNG THỨC TÌM KIẾM
     // Thêm LEFT JOIN FETCH để tải các artist liên quan trong cùng một truy vấn,

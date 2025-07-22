@@ -1,4 +1,4 @@
-package music.echospere.controller; // Để lấy thông tin người dùng hiện tại
+package music.echospere.controller;
 
 import music.echospere.entity.User;
 import music.echospere.service.UserService;
@@ -9,42 +9,40 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal; // Để lấy thông tin người dùng đang đăng nhập
+import java.util.Optional; // Cần import Optional
 
-@ControllerAdvice // Annotation này giúp Controller này chạy cho TẤT CẢ các request
+@ControllerAdvice
 public class HeaderController {
 
     @Autowired
-    private UserService userService; // Dịch vụ để lấy thông tin người dùng
+    private UserService userService; // Đảm bảo đã inject UserService
 
-    /**
-     * Phương thức này sẽ được thực thi trước mỗi request đến bất kỳ controller nào.
-     * Nó thêm các thuộc tính cần thiết cho header vào Model.
-     *
-     * @param model Đối tượng Model để thêm thuộc tính.
-     * @param principal Thông tin về người dùng đang đăng nhập (nếu có).
-     * @param query Tham số tìm kiếm từ URL (nếu có).
-     */
     @ModelAttribute
     public void addHeaderAttributes(Model model, Principal principal,
                                     @RequestParam(value = "query", required = false) String query) {
 
-        // Thêm thông tin người dùng hiện tại (cho phần "Tài khoản", "Đăng nhập")
         if (principal != null) {
             String username = principal.getName();
-            User currentUser = userService.findByUsername(username); // Giả sử có phương thức này
+            // Lấy Optional<User> từ UserService
+            Optional<User> userOptional = userService.findByUsername(username);
+
+            // Giải nén Optional:
+            // Cách 1: Sử dụng orElse(null) nếu bạn chấp nhận currentUser có thể là null
+            User currentUser = userOptional.orElse(null);
+
+            // Hoặc Cách 2: Sử dụng orElseGet để tạo một đối tượng User mặc định (ví dụ: User cho khách)
+            // User currentUser = userOptional.orElseGet(() -> new User("Guest", "guest@example.com"));
+
+            // Hoặc Cách 3: Sử dụng ifPresent để chỉ thêm vào model nếu user tồn tại
+            // userOptional.ifPresent(user -> model.addAttribute("currentUser", user));
+            // if (!userOptional.isPresent()) { model.addAttribute("currentUser", null); }
+
             model.addAttribute("currentUser", currentUser);
         } else {
-            model.addAttribute("currentUser", null); // Hoặc một đối tượng User rỗng
+            // Nếu không có người dùng nào đăng nhập, currentUser là null
+            model.addAttribute("currentUser", null);
         }
 
-        // Thêm từ khóa tìm kiếm vào model để hiển thị lại trên ô input
         model.addAttribute("query", query);
-
-        // Bạn có thể thêm các thuộc tính khác cần thiết cho header ở đây
-        // Ví dụ: thông báo, số lượng mục trong giỏ hàng (nếu có)
     }
-
-    // KHÔNG NÊN ĐẶT CÁC ENDPOINT @GetMapping TRỰC TIẾP VÀO ĐÂY NẾU CHỈ DÙNG @ControllerAdvice
-    // @ControllerAdvice chủ yếu để thêmModelAttribute hoặc xử lý ngoại lệ toàn cục.
-    // Logic tìm kiếm chính sẽ vẫn nằm trong HomeController của bạn.
 }

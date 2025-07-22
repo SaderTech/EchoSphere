@@ -18,4 +18,6 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer> {
     // Thêm phương thức này để tải playlist cùng với thông tin người dùng (user)
     @Query("SELECT p FROM Playlist p JOIN FETCH p.user WHERE p.id = :id")
     Optional<Playlist> findByIdWithUser(@Param("id") Integer id);
+
+    Page<Playlist> findByUserAndNameContainingIgnoreCase(User currentUser, String query, Pageable pageable);
 }

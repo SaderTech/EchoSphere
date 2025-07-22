@@ -30,4 +30,8 @@ public class SongService {
     public Song getDefaultSong() {
         return songRepository.findById(1).orElse(null); // Giả sử bài hát mặc định có ID là 1
     }
+
+    public List<Song> searchSongsByTitleContaining(String query) {
+        return songRepository.findByTitleContainingIgnoreCase(query);
+    }
 }
