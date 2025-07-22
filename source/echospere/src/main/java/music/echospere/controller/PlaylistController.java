@@ -38,7 +38,7 @@ public class PlaylistController {
     private final UserRepository userRepository;
     private final PlaylistService playlistService;
     private final SongService songService;
-    private static final String UPLOAD_DIR = "static/playlistImage/";
+    private static final String UPLOAD_DIR = "static/playlistImage/"; // Consider making this configurable
     private final UserService userService;
     private final SongRepository songRepository;
 
@@ -56,25 +56,27 @@ public class PlaylistController {
     }
 
     @GetMapping("/add")
-    public String showAddPlaylistForm(Model model){
-        PlaylistFormDTO playlistFormDTO = new PlaylistFormDTO();
-        model.addAttribute("playlistForm", playlistFormDTO);
+    public String showAddPlaylistForm(Model model) {
+        model.addAttribute("playlistFormDTO", new PlaylistFormDTO());
+        model.addAttribute("isEdit", false); // Explicitly set isEdit to false
         return "createPlaylits";
     }
 
     @PostMapping("/add")
-    public String addPlaylist(@Valid PlaylistFormDTO playlistFormDTO,
+    public String addPlaylist(@Valid @ModelAttribute("playlistFormDTO") PlaylistFormDTO playlistFormDTO, // Use @ModelAttribute
                               BindingResult bindingResult,
                               @RequestParam("coverImage") MultipartFile coverImage,
                               Principal principal,
                               Model model){
         if (bindingResult.hasErrors()) {
             logger.warn("Validation errors: {}", bindingResult.getAllErrors());
+            model.addAttribute("isEdit", false); // Re-add isEdit if validation fails
             return "createPlaylits";
         }
 
         if(principal == null){
             model.addAttribute("errorMessage", "Bạn cần đăng nhập để tạo playlist");
+            model.addAttribute("isEdit", false); // Re-add isEdit if not logged in
             logger.warn("User not logged in");
             return "createPlaylits";
         }
@@ -93,11 +95,14 @@ public class PlaylistController {
                 playlist.setPlaylistUrl(playlistFormDTO.getPlaylistUrl());
             }
             playlistRepository.save(playlist);
-            model.addAttribute("successMessage", "Playlist đã được tạo thành công");
+            // After successful creation, redirect to home with a success message
+            // Flash attributes are ideal for one-time messages after a redirect
+            // model.addAttribute("successMessage", "Playlist đã được tạo thành công"); // This won't show after redirect
             logger.info("Playlist created successfully: {}", playlist.getName());
             return "redirect:/home?filter=playlists";
         }catch (Exception e){
             model.addAttribute("errorMessage", "Lỗi khi tạo playlist: " + e.getMessage());
+            model.addAttribute("isEdit", false); // Re-add isEdit on error
             logger.error("Error when creating playlist: {}", e.getMessage());
             return "createPlaylits";
         }
@@ -105,11 +110,15 @@ public class PlaylistController {
 
     private String saveImage(MultipartFile file) throws Exception {
         if (file.isEmpty()) {
+            // It's often better to return null or a default image path here
+            // rather than throwing an IllegalArgumentException, depending on your UI flow.
+            // For now, keeping it as is based on previous context.
             throw new IllegalArgumentException("File hình ảnh không được rỗng");
         }
 
         // Định nghĩa thư mục lưu trữ
-        String uploadDir = "static/playlistImage/";
+        // Ensure this UPLOAD_DIR matches the base path used in handlePlaylistCoverImage
+        String uploadDir = UPLOAD_DIR; // Using the class constant
         Path uploadPath = Paths.get(uploadDir);
 
         // Tạo thư mục nếu chưa tồn tại
@@ -124,7 +133,8 @@ public class PlaylistController {
         // Lưu file
         Files.write(filePath, file.getBytes());
 
-        // Trả về URL
+        // Trả về URL tương đối mà web server có thể phục vụ
+        // This should align with your static resource mapping (e.g., /static/playlistImage/ -> /playlistImage/)
         return "/playlistImage/" + fileName;
     }
 
@@ -136,37 +146,47 @@ public class PlaylistController {
         }
 
         Optional<Playlist> playlistOpt = playlistService.getPlaylistById(id);
-        if (playlistOpt.isPresent()) {
-            Playlist playlist = playlistOpt.get();
+        if (playlistOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy playlist.");
+            logger.warn("Attempted to edit non-existent playlist with ID: {}", id);
+            return "redirect:/playlists";
+        }
+
+        Playlist playlist = playlistOpt.get();
+        try {
             User currentUser = userService.findByUsername(principal.getName())
                     .orElseThrow(() -> new RuntimeException("User not found: " + principal.getName()));
 
             // Kiểm tra quyền: chỉ chủ sở hữu playlist mới được chỉnh sửa
             if (!playlist.getUser().getId().equals(currentUser.getId())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền chỉnh sửa playlist này.");
+                logger.warn("User {} attempted to edit playlist {} owned by different user {}.", currentUser.getUsername(), id, playlist.getUser().getUsername());
                 return "redirect:/playlists"; // Hoặc trang lỗi 403
             }
 
             PlaylistFormDTO playlistFormDTO = new PlaylistFormDTO();
-            playlistFormDTO.setId(playlist.getId());
+            playlistFormDTO.setId(playlist.getId()); // Make sure ID is set for edit
             playlistFormDTO.setNamePlaylist(playlist.getName());
             playlistFormDTO.setPlaylistUrl(playlist.getPlaylistUrl());
             playlistFormDTO.setIsPublic(playlist.getIsPublic());
 
-            model.addAttribute("playlistForm", playlistFormDTO);
+            // SỬA ĐỔI: Đổi tên attribute từ "playlistForm" thành "playlistFormDTO" để nhất quán
+            model.addAttribute("playlistFormDTO", playlistFormDTO);
             model.addAttribute("currentPlaylist", playlist); // Để hiển thị bài hát hiện tại
             model.addAttribute("isEdit", true); // Báo hiệu đây là chế độ chỉnh sửa
             return "createPlaylits"; // Vẫn dùng chung template
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Playlist không tồn tại!");
-            logger.warn("Attempted to edit non-existent playlist with ID: {}", id);
-            return "redirect:/playlists"; // Hoặc trang danh sách playlist
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi xác thực quyền: " + e.getMessage());
+            logger.error("Error during playlist edit form access for ID {}: {}", id, e.getMessage());
+            return "redirect:/playlists";
         }
     }
 
     @PostMapping("/edit/{id}") // POST /playlists/edit/{id}
     public String updatePlaylist(@PathVariable Integer id,
-                                 @Valid @ModelAttribute("playlistForm") PlaylistFormDTO playlistFormDTO,
+                                 // SỬA ĐỔI: Thay @ModelAttribute("playlistForm") thành @ModelAttribute("playlistFormDTO")
+                                 @Valid @ModelAttribute("playlistFormDTO") PlaylistFormDTO playlistFormDTO,
                                  BindingResult bindingResult,
                                  @RequestParam(value = "coverImage", required = false) MultipartFile coverImage, // required = false vì có thể không update ảnh
                                  Principal principal,
@@ -179,7 +199,8 @@ public class PlaylistController {
             if(playlistOpt.isPresent()){
                 model.addAttribute("currentPlaylist", playlistOpt.get());
             }
-            model.addAttribute("isEdit", true);
+            model.addAttribute("isEdit", true); // ENSURE THIS IS PRESENT if validation fails on edit
+            // Spring will automatically put playlistFormDTO back into the model due to @ModelAttribute
             return "createPlaylits";
         }
 
@@ -199,6 +220,7 @@ public class PlaylistController {
                 // Kiểm tra quyền: chỉ chủ sở hữu playlist mới được chỉnh sửa
                 if (!existingPlaylist.getUser().getId().equals(currentUser.getId())) {
                     redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền cập nhật playlist này.");
+                    logger.warn("User {} attempted to update playlist {} owned by different user {}.", currentUser.getUsername(), id, existingPlaylist.getUser().getUsername());
                     return "redirect:/playlists";
                 }
 
@@ -213,6 +235,7 @@ public class PlaylistController {
                 playlistService.savePlaylist(existingPlaylist); // Sử dụng playlistService
                 redirectAttributes.addFlashAttribute("successMessage", "Playlist đã được cập nhật thành công!");
                 logger.info("Playlist updated successfully: {}", existingPlaylist.getName());
+                // Redirect back to the edit page to show success message and updated info
                 return "redirect:/playlists/edit/" + id;
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy playlist để cập nhật.");
@@ -222,9 +245,11 @@ public class PlaylistController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật playlist: " + e.getMessage());
             logger.error("Error when updating playlist ID {}: {}", id, e.getMessage(), e);
+            // On error during update, redirect back to the edit page to preserve path/ID
             return "redirect:/playlists/edit/" + id;
         }
     }
+
     private String handlePlaylistCoverImage(MultipartFile coverImage, String playlistUrlFromForm) throws IOException {
         String finalImageUrl = null;
         if (coverImage != null && !coverImage.isEmpty()) {
@@ -236,18 +261,22 @@ public class PlaylistController {
                 String fileName = UUID.randomUUID().toString() + "_" + coverImage.getOriginalFilename();
                 Path filePath = uploadPath.resolve(fileName);
                 Files.copy(coverImage.getInputStream(), filePath);
-                finalImageUrl = "/images/playlist_covers/" + fileName; // Đường dẫn tương đối cho web
+                // Adjust this path to match how your static resources are served
+                finalImageUrl = "/playlistImage/" + fileName; // Assumes /static/playlistImage/ maps to /playlistImage/
                 logger.debug("Saved new cover image: {}", finalImageUrl);
             } catch (IOException e) {
                 logger.error("Failed to save cover image file: {}", e.getMessage(), e);
                 throw e; // Re-throw to be caught by calling method
             }
         } else if (playlistUrlFromForm != null && !playlistUrlFromForm.isEmpty()) {
-            finalImageUrl = playlistUrlFromForm; // Sử dụng URL nếu được cung cấp
-            logger.debug("Using playlist URL from form: {}", finalImageUrl);
+            // Only use URL from form if it's not a default placeholder
+            if (!playlistUrlFromForm.contains("default.png") && !playlistUrlFromForm.contains("placeholder.com")) {
+                finalImageUrl = playlistUrlFromForm; // Sử dụng URL nếu được cung cấp
+                logger.debug("Using playlist URL from form: {}", finalImageUrl);
+            }
         } else {
             // Có thể đặt ảnh mặc định nếu không có cả file và URL
-            finalImageUrl = "/images/playlist_covers/default.png"; // Đảm bảo có ảnh default.png
+            finalImageUrl = "/playlistImage/default.png"; // Đảm bảo có ảnh default.png trong static/playlistImage/
             logger.debug("No cover image provided, using default: {}", finalImageUrl);
         }
         return finalImageUrl;

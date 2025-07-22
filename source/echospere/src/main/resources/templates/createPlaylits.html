@@ -113,8 +113,8 @@
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <form th:action="${isEdit ? '/playlists/edit/' + playlistForm.id : '/playlists/add'}"
-              th:object="${playlistForm}"
+        <form th:action="${isEdit ? '/playlists/edit/' + playlistFormDTO.id : '/playlists/add'}"
+              th:object="${playlistFormDTO}"
               method="post"
               enctype="multipart/form-data"
               class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700"
@@ -136,9 +136,9 @@
                        class="w-full p-3 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-900 file:text-white hover:file:bg-purple-800 transition-colors duration-200">
                 <p class="text-sm text-gray-500 mt-1">Chọn ảnh mới hoặc nhập URL hình ảnh (tùy chọn).</p>
 
-                <div th:if="${isEdit and playlistForm.playlistUrl != null and playlistForm.playlistUrl != ''}" class="mt-4">
+                <div th:if="${isEdit and playlistFormDTO.playlistUrl != null and playlistFormDTO.playlistUrl != ''}" class="mt-4">
                     <p class="text-sm font-medium text-gray-300 mb-2">Ảnh bìa hiện tại:</p>
-                    <img th:src="@{${playlistForm.playlistUrl}}" alt="Current Playlist Cover" class="w-32 h-32 object-cover rounded-lg shadow-md border border-gray-700">
+                    <img th:src="@{${playlistFormDTO.playlistUrl}}" alt="Current Playlist Cover" class="w-32 h-32 object-cover rounded-lg shadow-md border border-gray-700">
                     <input type="hidden" th:field="*{playlistUrl}" />
                 </div>
             </div>
@@ -194,7 +194,7 @@
     const csrfToken = /*[[${_csrf?.token}]]*/ 'default_csrf_token_if_not_security';
     const csrfHeader = /*[[${_csrf?.headerName}]]*/ 'X-CSRF-TOKEN';
     // Get playlist ID and edit mode flag from Thymeleaf model
-    const playlistId = /*[[${playlistForm.id}]]*/ null;
+    const playlistId = /*[[${playlistFormDTO.id}]]*/ null;
     const isEditMode = /*[[${isEdit}]]*/ false;
 
     // Element references

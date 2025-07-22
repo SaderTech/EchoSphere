@@ -82,6 +82,12 @@
         <button class="ml-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors duration-200">
           <i class="fas fa-play"></i> Play
         </button>
+        <!-- THÊM NÚT CHỈNH SỬA Ở ĐÂY -->
+        <a th:if="${#authentication.name == playlist.user.username}"
+           th:href="@{/playlists/edit/{id}(id=${playlist.id})}"
+           class="ml-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-full transition-colors duration-200 inline-block">
+            <i class="fas fa-edit"></i> Chỉnh sửa
+        </a>
       </div>
     </div>
   </section>
